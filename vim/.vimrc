@@ -154,7 +154,7 @@ au BufNewFile,BufRead *.ejs set filetype=html
 augroup autoformat_settings
   autocmd FileType bzl AutoFormatBuffer buildifier
   autocmd FileType c,cpp,proto AutoFormatBuffer clang-format
-  autocmd FileType javascript AutoFormatBuffer prettier
+  autocmd FileType javascript,typescript AutoFormatBuffer prettier
   autocmd FileType dart AutoFormatBuffer dartfmt
   autocmd FileType go AutoFormatBuffer gofmt
   autocmd FileType gn AutoFormatBuffer gn
