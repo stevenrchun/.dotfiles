@@ -13,7 +13,7 @@ call vundle#begin()
   Plugin 'srcery-colors/srcery-vim' " Srcery colorscheme
   Plugin 'junegunn/fzf.vim' " FZF vim plugin
   Plugin 'haya14busa/incsearch.vim' " Incremental search
-  Plugin 'Valloric/YouCompleteMe' " Completion engine
+  " Plugin 'Valloric/YouCompleteMe' " Completion engine
   Plugin 'w0rp/ale' " Async linting engine
   Plugin 'pangloss/vim-javascript'
   Plugin 'mxw/vim-jsx' " JSX syntax
