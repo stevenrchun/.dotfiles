@@ -1,35 +1,49 @@
 set nocompatible
 filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
+
+" Automatically install Vim Plug if not available.
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 set rtp+=/usr/local/opt/fzf
-call vundle#begin()
-	Plugin 'VundleVim/Vundle.vim' " Plugin Manager
-	Plugin 'itchyny/lightline.vim' " A better status line at the bottom
-	Plugin 'jiangmiao/auto-pairs' " Pairs brackets n things
-  Plugin 'scrooloose/nerdtree' " Project tree for files
-  Plugin 'mengelbrecht/lightline-bufferline' "Use the tabline for buffers
-  Plugin 'vim-scripts/vim-auto-save' " Allow auto-save (currently disabled)
-  Plugin 'terryma/vim-smooth-scroll' " Smooth out scrolling commands
-  Plugin 'srcery-colors/srcery-vim' " Srcery colorscheme
-  Plugin 'junegunn/fzf.vim' " FZF vim plugin
-  Plugin 'haya14busa/incsearch.vim' " Incremental search
-  " Plugin 'Valloric/YouCompleteMe' " Completion engine
-  Plugin 'w0rp/ale' " Async linting engine
-  Plugin 'pangloss/vim-javascript'
-  Plugin 'mxw/vim-jsx' " JSX syntax
-  Plugin 'chrisjohnson/vim8-bracketed-paste-mode-tmux' " make proper indentation inside tmux
-  Plugin 'flowtype/vim-flow' " Flow type checking for vim
-  Plugin 'tpope/vim-commentary' " simple commenting
-  Plugin 'nikvdp/ejs-syntax'
-  Plugin 'google/vim-maktaba' " For Google codefmt
-  Plugin 'google/vim-codefmt'
-  Plugin 'godlygeek/tabular' " required for vim markdown
-  Plugin 'plasticboy/vim-markdown' " for tex syntax in MD files
-  " Also add Glaive, which is used to configure codefmt's maktaba flags. See
-  " `:help :Glaive` for usage.
-  Plugin 'google/vim-glaive'
-call vundle#end()
-call glaive#Install()
+call plug#begin()
+	Plug 'VundleVim/Vundle.vim' " Plugin Manager
+	Plug 'itchyny/lightline.vim' " A better status line at the bottom
+	Plug 'jiangmiao/auto-pairs' " Pairs brackets n things
+  Plug 'mengelbrecht/lightline-bufferline' "Use the tabline for buffers
+  Plug 'terryma/vim-smooth-scroll' " Smooth out scrolling commands
+  Plug 'srcery-colors/srcery-vim' " Srcery colorscheme
+  Plug 'junegunn/fzf.vim' " FZF vim plugin
+  Plug 'junegunn/fzf' " FZF vim plugin
+  Plug 'haya14busa/incsearch.vim' " Incremental search
+  Plug 'pangloss/vim-javascript'
+  Plug 'mxw/vim-jsx' " JSX syntax
+  Plug 'chrisjohnson/vim8-bracketed-paste-mode-tmux' " make proper indentation inside tmux
+  Plug 'tpope/vim-commentary' " simple commenting
+  Plug 'nikvdp/ejs-syntax'
+  Plug 'godlygeek/tabular' " required for vim markdown
+  Plug 'plasticboy/vim-markdown' " for tex syntax in MD files
+  Plug 'udalov/kotlin-vim'
+  if !has('nvim')
+    Plug 'google/vim-maktaba' " For Google codefmt
+    Plug 'google/vim-codefmt'
+    Plug 'google/vim-glaive'
+  endif
+  "Neovim Plugins
+  if has('nvim')
+    Plug 'karb94/neoscroll.nvim'
+    Plug 'sbdchd/neoformat'
+    Plug 'j-hui/fidget.nvim', { 'tag': 'legacy' }
+  endif
+call plug#end()
+
+if !has('nvim')
+  call glaive#Install()
+endif
+
 set autoindent
 set smartindent
 filetype plugin indent on
@@ -60,26 +74,21 @@ nnoremap <C-c> :bp\|bd #<CR>
 nnoremap <C-l> :bn<CR>
 nnoremap <C-h> :bp<CR>
 imap jj <Esc>
+
 " Remap half page motion
-noremap <S-j> <c-d>
-noremap <S-k> <c-u>
+map <S-j> <C-d>
+map <S-k> <C-u>
+
 " Remap save
 noremap <silent> <c-s> :update<CR>
+
 " Remap in-buffer Search
 map <S-f> /
 " Remap fzf.vim Ag Project Search in buffer
-nnoremap <c-f> :Ag<space>
+nnoremap <C-f> :Ag<space>
 nnoremap <leader>f :Files<CR>
-let $FZF_DEFAULT_COMMAND='ag -g ""'
-
-" Smooth scroll remap
-noremap <silent> <S-k> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-noremap <silent> <S-j> :call smooth_scroll#down(&scroll, 0, 3)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-" noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
-" Remap YCM GoTo Definition
-noremap gd:YcmCompleter GoTo<CR>
-noremap gD:YcmCompleter GoToDeclaration<CR>
+nnoremap ; :Buffers<CR>
+let $FZF_DEFAULT_COMMAND='ag --hidden -g ""'
 
 " Search related settings
 map /  <Plug>(incsearch-forward)
@@ -90,14 +99,13 @@ map g/ <Plug>(incsearch-stay)
 let g:incsearch#auto_nohlsearch = 1
 map n  <Plug>(incsearch-nohl-n)
 map N  <Plug>(incsearch-nohl-N)
-map *  <Plug>(incsearch-nohl-*)
-map #  <Plug>(incsearch-nohl-#)
-map g* <Plug>(incsearch-nohl-g*)
-map g# <Plug>(incsearch-nohl-g#)
 
 " Language specific syntax
 autocmd FileType * set tabstop=2|set shiftwidth=2|set expandtab
 autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab
+" Prevent typescript hanging, see
+" https://vi.stackexchange.com/questions/25086/vim-hangs-when-i-open-a-typescript-file/28721#28721?newreg=b7e9e7a35a2e4ee8806d1900d1c07455
+" autocmd FileType typescript set re=2
 
 " Wrap markdown files at 80 characters
 autocmd bufreadpre *.md setlocal textwidth=80
@@ -106,34 +114,6 @@ autocmd bufreadpre *.md setlocal textwidth=80
 let g:vim_markdown_math = 1
 let g:vim_markdown_folding_disabled = 1
 
-" Open nerdtree if opening current directory
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-let g:NERDTreeWinSize=15
-
-nnoremap <C-n> :NERDTreeToggle<CR>
-
-" ALE Settings
-let g:ale_open_list = 1
-let g:ale_list_window_size = 3
-let g:ale_fix_on_save = 1
-let g:ale_linters = {
-\   'javascript': ['eslint', 'flow']
-\}
-
-let g:ale_python_auto_pipenv = 1
-
-let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'python': ['autopep8'],
- \  'javascript': ['eslint'],
-\}
-" Don't automatically lint on text change
-let g:ale_lint_on_text_changed = 'never'
-" if you don't want linters to run on opening a file
-let g:ale_lint_on_enter = 0
-" turn off completion.
-let g:ale_completion_enabled = 0
 
 " Buffer tabs for lightline
 "set hidden
@@ -151,48 +131,30 @@ nnoremap <Right> :bnext<CR>
 " Make codefmt work with ejs.
 au BufNewFile,BufRead *.ejs set filetype=html
 
-augroup autoformat_settings
-  autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType c,cpp,proto AutoFormatBuffer clang-format
-  autocmd FileType javascript,typescript AutoFormatBuffer prettier
-  autocmd FileType dart AutoFormatBuffer dartfmt
-  autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,sass,scss,less,json,ejs AutoFormatBuffer js-beautify
-  autocmd FileType java AutoFormatBuffer google-java-format
-  autocmd FileType python AutoFormatBuffer yapf
-  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
-  autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType vue AutoFormatBuffer prettier
-augroup END
-
-" Point You Complete Me to right python binary in pipenv envs
-" Point YCM to the Pipenv created virtualenv, if possible
-" At first, get the output of 'pipenv --venv' command.
-let pipenv_venv_path = system('pipenv --venv')
-" The above system() call produces a non zero exit code whenever
-" a proper virtual environment has not been found.
-" So, second, we only point YCM to the virtual environment when
-" the call to 'pipenv --venv' was successful.
-" Remember, that 'pipenv --venv' only points to the root directory
-" of the virtual environment, so we have to append a full path to
-" the python executable.
-if shell_error == 0
-  let venv_path = substitute(pipenv_venv_path, '\n', '', '')
-  let g:ycm_python_binary_path = venv_path . '/bin/python'
-else
-  let g:ycm_python_binary_path = 'python'
+if !has('nvim')
+  augroup autoformat_settings
+    autocmd FileType bzl AutoFormatBuffer buildifier
+    autocmd FileType c,cpp,proto AutoFormatBuffer clang-format
+    autocmd FileType javascript,typescript AutoFormatBuffer prettier
+    autocmd FileType dart AutoFormatBuffer dartfmt
+    autocmd FileType go AutoFormatBuffer gofmt
+    autocmd FileType gn AutoFormatBuffer gn
+    autocmd FileType html,css,sass,scss,less,json,ejs AutoFormatBuffer js-beautify
+    autocmd FileType java AutoFormatBuffer google-java-format
+    autocmd FileType python AutoFormatBuffer yapf
+    " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+    autocmd FileType rust AutoFormatBuffer rustfmt
+    autocmd FileType vue AutoFormatBuffer prettier
+    autocmd FileType lua AutoFormatBuffer stylua
+  augroup END
 endif
 
-let g:ycm_autoclose_preview_window_after_insertion = 1
-
-let g:ycm_global_ycm_extra_conf = '.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
-
-" Css semantic triggers for YCM
-let g:ycm_semantic_triggers = {
-    \   'css': [ 're!^\s{2}', 're!:\s+' ],
-    \ }
-
+if has('nvim')
+  augroup fmt
+    autocmd!
+    autocmd BufWritePre * undojoin | Neoformat
+  augroup END
+endif
 
 " use lightline-buffer in lightline
 let g:lightline = {}

@@ -38,9 +38,6 @@ alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias network_strength='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I'
 alias gccp='g++ -ansi -pedantic-errors -Wall $1 $2 $3'
 
-# To Allow YouCompleteMe for vim
-export PYTHON_CONFIGURE_OPTS="--enable-framework"
-
 # Allow Ctrl-S Ctrl-Q commands in terminal (for saving in Vim)
 stty -ixon
 
