@@ -1,5 +1,4 @@
 set nocompatible
-filetype off
 
 " Automatically install Vim Plug if not available.
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
@@ -10,7 +9,6 @@ endif
 
 set rtp+=/usr/local/opt/fzf
 call plug#begin()
-	Plug 'VundleVim/Vundle.vim' " Plugin Manager
 	Plug 'itchyny/lightline.vim' " A better status line at the bottom
 	Plug 'jiangmiao/auto-pairs' " Pairs brackets n things
   Plug 'mengelbrecht/lightline-bufferline' "Use the tabline for buffers
@@ -27,6 +25,7 @@ call plug#begin()
   Plug 'godlygeek/tabular' " required for vim markdown
   Plug 'plasticboy/vim-markdown' " for tex syntax in MD files
   Plug 'udalov/kotlin-vim'
+  Plug 'neovim/nvim-lspconfig' " LSP Config Manager
   if !has('nvim')
     Plug 'google/vim-maktaba' " For Google codefmt
     Plug 'google/vim-codefmt'
@@ -44,6 +43,23 @@ if !has('nvim')
   call glaive#Install()
 endif
 
+" ------------------------------------------------------
+" Enable modern Vim features not compatible with Vi spec.
+" ------------------------------------------------------
+set number
+set ignorecase
+" hide extra insert below status line
+set noshowmode
+" automatically read in external changes
+set autoread
+" Update file after 4s of inactivity in normal mode for autoread
+au CursorHold * checktime
+" No tabs, just spaces. Also explicitly set shiftwidth and tabstop since Go uses
+" this for indentation.
+set shiftwidth=2 tabstop=2 expandtab
+" improve scroll lag
+set lazyredraw
+
 set autoindent
 set smartindent
 filetype plugin indent on
@@ -54,39 +70,45 @@ set backspace=indent,eol,start
 set number
 set smartcase
 set hlsearch
-set lazyredraw
 " Allow hidden, unsaved buffers
 set hidden
-" Peristent Undo
-set undofile
-set undodir=~/.vim/undodir
+" always show tabline
+set showtabline=2
+" ------------------------------------------------------
 
-" Colorscheme
-" colorscheme srcery
-colorscheme molokai
-
-" REMAPS
-" Remap to end of or beginning of line motions
+" Remap leader to space
 let mapleader = " "
-" Remap close file buffer
-nnoremap <C-c> :bp\|bd #<CR>
-" Remap next/previous buffer
-nnoremap <C-l> :bn<CR>
-nnoremap <C-h> :bp<CR>
+
+" Remap exit insert
 imap jj <Esc>
+
+" Remap save
+map <silent> <C-s> :update<CR>
 
 " Remap half page motion
 map <S-j> <C-d>
 map <S-k> <C-u>
 
-" Remap save
-noremap <silent> <c-s> :update<CR>
+" BUFFER MANAGEMENT
+" remap ctrl-h/j to move buffers
+nnoremap <C-h> :bprev<CR>
+nnoremap <C-l> :bnext<CR>
 
+" Ctrl-c to close buffer
+nnoremap <C-c> :bp\|bd #<CR>
+
+" Colorscheme
+" colorscheme srcery
+colorscheme molokai
+
+" SEARCH
 " Remap in-buffer Search
 map <S-f> /
+
 " Remap fzf.vim Ag Project Search in buffer
-nnoremap <C-f> :Ag<space>
-nnoremap <leader>f :Files<CR>
+nnoremap <C-f> :Lines
+nnoremap <leader>cs :Ag<space>
+nnoremap <leader>ff :Files<CR>
 nnoremap ; :Buffers<CR>
 let $FZF_DEFAULT_COMMAND='ag --hidden -g ""'
 
@@ -115,10 +137,6 @@ let g:vim_markdown_math = 1
 let g:vim_markdown_folding_disabled = 1
 
 
-" Buffer tabs for lightline
-"set hidden
-"" allow buffer switching without saving
-set showtabline=2  " always show tabline
 
 " Turn on autosave on startup
 let g:auto_save = 0
