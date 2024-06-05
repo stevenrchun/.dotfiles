@@ -36,6 +36,7 @@ call plug#begin()
     Plug 'karb94/neoscroll.nvim'
     Plug 'sbdchd/neoformat'
     Plug 'j-hui/fidget.nvim', { 'tag': 'legacy' }
+    Plug 'rose-pine/neovim' " Light theme!
   endif
 call plug#end()
 
@@ -97,9 +98,6 @@ nnoremap <C-l> :bnext<CR>
 " Ctrl-c to close buffer
 nnoremap <C-c> :bp\|bd #<CR>
 
-" Colorscheme
-" colorscheme srcery
-colorscheme molokai
 
 " SEARCH
 " Remap in-buffer Search
@@ -175,9 +173,17 @@ if has('nvim')
 endif
 
 " use lightline-buffer in lightline
-let g:lightline = {}
+let g:lightline = {
+  \ 'colorscheme': 'rosepine',
+  \ }
 let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
 let g:lightline.component_type   = {'buffers': 'tabsel'}
 
 let g:lightline#bufferline#min_buffer_count = 2
+
+set bg=light
+" Colorscheme
+" colorscheme srcery
+" colorscheme molokai
+colorscheme rose-pine-dawn

@@ -1,6 +1,9 @@
 -- Source vimrc
 vim.cmd("source ~/.vimrc")
 
+-- Persistent Undo
+vim.opt.undofile = true
+
 -- Use new osc52 support in neovim
 -- vim.g.clipboard = {
 --   name = 'OSC 52',
@@ -58,6 +61,19 @@ vim.api.nvim_create_autocmd("FileType", {
 				storagePath = vim.fs.dirname(
 					vim.fs.find({ "WORKSPACE.bazel", "WORKSPACE", "settings.gradle", ".gitignore" }, { upward = true })[1]
 				),
+				additionalSourceExclusions = { "beepus", "bingus" },
+			},
+			settings = {
+				kotlin = {
+					scripts = {
+						enabled = false,
+					},
+					completion = {
+						snippets = {
+							enabled = true,
+						},
+					},
+				},
 			},
 		})
 		-- Required to actual attach the server to the buffer that triggered the FileType event.
@@ -104,3 +120,4 @@ vim.keymap.set("n", "gi", vim.lsp.buf.definition)
 vim.keymap.set("n", "gh", vim.lsp.buf.hover)
 vim.keymap.set("n", "gr", vim.lsp.buf.references)
 vim.keymap.set("n", "rr", vim.lsp.buf.rename)
+vim.keymap.set("n", "ge", vim.diagnostic.open_float)
