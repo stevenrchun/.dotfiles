@@ -23,9 +23,100 @@ require("neoscroll").setup({
 	mappings = { "<C-u>", "<C-d>" },
 })
 
+-- Fidget notifications
 require("fidget").setup({
 	-- options
 })
+
+-- Notify if code action available
+require("nvim-lightbulb").setup({
+	autocmd = { enabled = true },
+	virtual_text = { enabled = true },
+	sign = { enabled = false },
+})
+
+-- Treesitter configs
+require("nvim-treesitter.configs").setup({
+	-- A list of parser names, or "all" (the five listed parsers should always be installed)
+	ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "kotlin", "java" },
+
+	-- Install parsers synchronously (only applied to `ensure_installed`)
+	sync_install = false,
+
+	-- Automatically install missing parsers when entering buffer
+	-- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+	auto_install = fall,
+
+	-- List of parsers to ignore installing (or "all")
+	ignore_install = {},
+
+	---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+	-- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+
+	highlight = {
+		enable = true,
+
+		-- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+		-- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+		-- the name of the parser)
+		-- list of language that will be disabled
+		disable = {},
+		-- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+
+		-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+		-- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+		-- Using this option may slow down your editor, and you may see some duplicate highlights.
+		-- Instead of true it can also be a list of languages
+		additional_vim_regex_highlighting = false,
+	},
+})
+
+-- Formatting with Conform
+local slow_format_filetypes = {}
+require("conform").setup({
+	formatters_by_ft = {
+		kotlin = { "ktlint" },
+		javascript = { "prettierd" },
+	},
+	-- Automatically detects slow formatters and runs them aysnc
+	format_on_save = function(bufnr)
+		if slow_format_filetypes[vim.bo[bufnr].filetype] then
+			return
+		end
+		local function on_format(err)
+			if err and err:match("timeout$") then
+				slow_format_filetypes[vim.bo[bufnr].filetype] = true
+			end
+		end
+
+		return { timeout_ms = 500, lsp_fallback = false }, on_format
+	end,
+
+	format_after_save = function(bufnr)
+		if not slow_format_filetypes[vim.bo[bufnr].filetype] then
+			return
+		end
+		return { lsp_fallback = false }
+	end,
+})
+
+-- Autocomplete via COQ
+-- Unbind coq jump to mark.
+vim.g.coq_settings = {
+	keymap = {
+		jump_to_mark = "",
+	},
+	auto_start = "shut-up",
+	clients = {
+		lsp = {
+			always_on_top = {},
+			resolve_timeout = 1,
+		},
+	},
+	limits = {
+		completion_auto_timeout = 1,
+	},
+}
 
 -- LSP Configs.
 -- Note: still installing the binaries manually.
@@ -116,8 +207,17 @@ vim.keymap.set("n", "<S-j>", "<C-d>", { remap = true })
 vim.keymap.set("n", "<S-k>", "<C-u>", { remap = true })
 
 -- LSP Remaps
+-- go in
 vim.keymap.set("n", "gi", vim.lsp.buf.definition)
+-- get help
 vim.keymap.set("n", "gh", vim.lsp.buf.hover)
+-- get references
 vim.keymap.set("n", "gr", vim.lsp.buf.references)
+-- get fix
+vim.keymap.set("n", "gf", vim.lsp.buf.code_action)
+-- refactor rename
 vim.keymap.set("n", "rr", vim.lsp.buf.rename)
+-- get error
 vim.keymap.set("n", "ge", vim.diagnostic.open_float)
+-- get list (of errors)
+vim.keymap.set("n", "gl", vim.diagnostic.setqflist)

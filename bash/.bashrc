@@ -17,8 +17,18 @@ function Git_branch_color {
   fi
 }
 
+# Taken from https://gist.github.com/miki725/9783474
+function set_virtualenv () {
+  if test -z "$VIRTUAL_ENV" ; then
+      PYTHON_VIRTUALENV=""
+  else
+      PYTHON_VIRTUALENV="${BLUE}[`basename \"$VIRTUAL_ENV\"`]${COLOR_NONE} "
+  fi
+}
+
 function prompt_title {
-   PS1="$COLOR_PURPLE\w$(Git_branch_color)$(Git_branch_name)${COLOR_RESET} "
+  set_virtualenv
+  PS1="$COLOR_PURPLE\w$(Git_branch_color)$(Git_branch_name)${COLOR_RESET}$PYTHON_VIRTUALENV "
 }
 
 PROMPT_COMMAND=prompt_title

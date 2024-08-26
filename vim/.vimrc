@@ -10,7 +10,6 @@ endif
 set rtp+=/usr/local/opt/fzf
 call plug#begin()
 	Plug 'itchyny/lightline.vim' " A better status line at the bottom
-	Plug 'jiangmiao/auto-pairs' " Pairs brackets n things
   Plug 'mengelbrecht/lightline-bufferline' "Use the tabline for buffers
   Plug 'terryma/vim-smooth-scroll' " Smooth out scrolling commands
   Plug 'srcery-colors/srcery-vim' " Srcery colorscheme
@@ -19,30 +18,24 @@ call plug#begin()
   Plug 'haya14busa/incsearch.vim' " Incremental search
   Plug 'pangloss/vim-javascript'
   Plug 'mxw/vim-jsx' " JSX syntax
-  Plug 'chrisjohnson/vim8-bracketed-paste-mode-tmux' " make proper indentation inside tmux
   Plug 'tpope/vim-commentary' " simple commenting
   Plug 'nikvdp/ejs-syntax'
   Plug 'godlygeek/tabular' " required for vim markdown
   Plug 'plasticboy/vim-markdown' " for tex syntax in MD files
   Plug 'udalov/kotlin-vim'
-  Plug 'neovim/nvim-lspconfig' " LSP Config Manager
-  if !has('nvim')
-    Plug 'google/vim-maktaba' " For Google codefmt
-    Plug 'google/vim-codefmt'
-    Plug 'google/vim-glaive'
-  endif
-  "Neovim Plugins
+  Plug 'mhinz/vim-signify' " G4 Diffs in gutter
+  "Neovim exclusive Plugins
   if has('nvim')
     Plug 'karb94/neoscroll.nvim'
-    Plug 'sbdchd/neoformat'
     Plug 'j-hui/fidget.nvim', { 'tag': 'legacy' }
     Plug 'rose-pine/neovim' " Light theme!
+    Plug 'neovim/nvim-lspconfig' " LSP Config Manager
+    Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+    Plug 'kosayoda/nvim-lightbulb' " Notify if available code actions.
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Treesitter!
+    Plug 'stevearc/conform.nvim' " Formatting!
   endif
 call plug#end()
-
-if !has('nvim')
-  call glaive#Install()
-endif
 
 " ------------------------------------------------------
 " Enable modern Vim features not compatible with Vi spec.
@@ -79,13 +72,10 @@ set showtabline=2
 
 " Remap leader to space
 let mapleader = " "
-
 " Remap exit insert
 imap jj <Esc>
-
 " Remap save
 map <silent> <C-s> :update<CR>
-
 " Remap half page motion
 map <S-j> <C-d>
 map <S-k> <C-u>
@@ -98,17 +88,26 @@ nnoremap <C-l> :bnext<CR>
 " Ctrl-c to close buffer
 nnoremap <C-c> :bp\|bd #<CR>
 
-
 " SEARCH
+" Remap fzf.vim Ag Project Search in buffer
+let $FZF_DEFAULT_COMMAND='ag --hidden -g ""'
 " Remap in-buffer Search
 map <S-f> /
 
-" Remap fzf.vim Ag Project Search in buffer
+" FILE NAVIGATION
+" Function for population quickfix list with git changed files.
+function! ShowGitTouched() abort
+  let flist = system('git diff --name-only main')
+  let flist = split(flist, '\n')
+  let list = map(copy(flist), '{"filename": v:val, "lnum": 1}')
+  call setqflist(list)
+  :copen
+endfunction
 nnoremap <C-f> :Lines
 nnoremap <leader>cs :Ag<space>
 nnoremap <leader>ff :Files<CR>
 nnoremap ; :Buffers<CR>
-let $FZF_DEFAULT_COMMAND='ag --hidden -g ""'
+map <leader>pp :call ShowGitTouched()<CR>
 
 " Search related settings
 map /  <Plug>(incsearch-forward)
@@ -120,13 +119,6 @@ let g:incsearch#auto_nohlsearch = 1
 map n  <Plug>(incsearch-nohl-n)
 map N  <Plug>(incsearch-nohl-N)
 
-" Language specific syntax
-autocmd FileType * set tabstop=2|set shiftwidth=2|set expandtab
-autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab
-" Prevent typescript hanging, see
-" https://vi.stackexchange.com/questions/25086/vim-hangs-when-i-open-a-typescript-file/28721#28721?newreg=b7e9e7a35a2e4ee8806d1900d1c07455
-" autocmd FileType typescript set re=2
-
 " Wrap markdown files at 80 characters
 autocmd bufreadpre *.md setlocal textwidth=80
 
@@ -134,46 +126,16 @@ autocmd bufreadpre *.md setlocal textwidth=80
 let g:vim_markdown_math = 1
 let g:vim_markdown_folding_disabled = 1
 
-
-
-" Turn on autosave on startup
-let g:auto_save = 0
-
 " remap arrow keys
 nnoremap <Left> :bprev<CR>
 nnoremap <Right> :bnext<CR>
 
-" Code formatters
-" Make codefmt work with ejs.
+" Make sure ejs is recognized as html.
 au BufNewFile,BufRead *.ejs set filetype=html
-
-if !has('nvim')
-  augroup autoformat_settings
-    autocmd FileType bzl AutoFormatBuffer buildifier
-    autocmd FileType c,cpp,proto AutoFormatBuffer clang-format
-    autocmd FileType javascript,typescript AutoFormatBuffer prettier
-    autocmd FileType dart AutoFormatBuffer dartfmt
-    autocmd FileType go AutoFormatBuffer gofmt
-    autocmd FileType gn AutoFormatBuffer gn
-    autocmd FileType html,css,sass,scss,less,json,ejs AutoFormatBuffer js-beautify
-    autocmd FileType java AutoFormatBuffer google-java-format
-    autocmd FileType python AutoFormatBuffer yapf
-    " Alternative: autocmd FileType python AutoFormatBuffer autopep8
-    autocmd FileType rust AutoFormatBuffer rustfmt
-    autocmd FileType vue AutoFormatBuffer prettier
-    autocmd FileType lua AutoFormatBuffer stylua
-  augroup END
-endif
-
-if has('nvim')
-  augroup fmt
-    autocmd!
-    autocmd BufWritePre * undojoin | Neoformat
-  augroup END
-endif
 
 set bg=light
 
+" PLUGIN SPECIFIC CONFIGURATION
 " use lightline-buffer in lightline
 let g:lightline = {
   \ 'colorscheme': 'rosepine',
@@ -190,6 +152,17 @@ let s:palette = g:lightline#colorscheme#rosepine#palette
 "                                  Text     background
 let s:palette.tabline.tabsel = [['#faf4ed', '#565276', 24, 255]]
 unlet s:palette
+
+" Configure signify
+" This makes it so vim reserves the sign column, which
+" prevents jitter for signify and LSP help icons.
+set signcolumn=yes
+let g:signify_vcs_list = ['hg', 'git', 'perforce']
+let g:signify_vcs_cmds = {
+    \ 'hg': 'hg diff -r .^ --color never --config defaults.diff= --nodates -U0 -- %f',
+    \ 'perforce': 'p4 info >& /dev/null && env G4MULTIDIFF=0 P4DIFF=%d p4 diff -dU0 %f',
+    \ 'git': 'git diff --no-color --no-ext-diff -U0 main -- %f',
+    \ }
 
 " Colorscheme
 " colorscheme srcery
