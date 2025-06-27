@@ -77,6 +77,7 @@ require("conform").setup({
 	formatters_by_ft = {
 		kotlin = { "ktlint" },
 		javascript = { "prettierd" },
+		html = { "superhtml" },
 	},
 	-- Automatically detects slow formatters and runs them aysnc
 	format_on_save = function(bufnr)
@@ -100,29 +101,17 @@ require("conform").setup({
 	end,
 })
 
--- Autocomplete via COQ
--- Unbind coq jump to mark.
-vim.g.coq_settings = {
-	keymap = {
-		jump_to_mark = "",
-	},
-	auto_start = "shut-up",
-	clients = {
-		lsp = {
-			always_on_top = {},
-			resolve_timeout = 1,
-		},
-	},
-	limits = {
-		completion_auto_timeout = 1,
-	},
-}
+-- Avante config
+-- require('avante_lib').load()
+-- require('avante').setup ({
+--   -- Your config here!
+-- })
 
 -- LSP Configs.
 -- Note: still installing the binaries manually.
 local lspconfig = require("lspconfig")
-lspconfig.tsserver.setup({})
-require("lspconfig").tsserver.setup({})
+lspconfig.ts_ls.setup({})
+lspconfig.superhtml.setup({})
 
 vim.lsp.set_log_level("INFO")
 

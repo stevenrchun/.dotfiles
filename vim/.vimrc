@@ -1,5 +1,3 @@
-set nocompatible
-
 " Automatically install Vim Plug if not available.
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
@@ -14,6 +12,7 @@ call plug#begin()
   Plug 'terryma/vim-smooth-scroll' " Smooth out scrolling commands
   Plug 'srcery-colors/srcery-vim' " Srcery colorscheme
   Plug 'junegunn/fzf.vim' " FZF vim plugin
+  Plug 'UtkarshVerma/molokai.nvim', { 'branch': 'main' } " Neovim molokai
   Plug 'junegunn/fzf' " FZF vim plugin
   Plug 'haya14busa/incsearch.vim' " Incremental search
   Plug 'pangloss/vim-javascript'
@@ -34,6 +33,11 @@ call plug#begin()
     Plug 'kosayoda/nvim-lightbulb' " Notify if available code actions.
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Treesitter!
     Plug 'stevearc/conform.nvim' " Formatting!
+    " Avante Deps
+    " Plug 'stevearc/dressing.nvim'
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'MunifTanjim/nui.nvim'
+    Plug 'yetone/avante.nvim', { 'branch': 'main', 'do': 'make' }
   endif
 call plug#end()
 
@@ -59,7 +63,7 @@ set smartindent
 filetype plugin indent on
 syntax on
 set noshowmode
-set laststatus=2
+set laststatus=3
 set backspace=indent,eol,start
 set number
 set smartcase
@@ -103,7 +107,7 @@ function! ShowGitTouched() abort
   call setqflist(list)
   :copen
 endfunction
-nnoremap <C-f> :Lines
+nnoremap <C-f> :Lines<CR>
 nnoremap <leader>cs :Ag<space>
 nnoremap <leader>ff :Files<CR>
 nnoremap ; :Buffers<CR>
@@ -137,10 +141,10 @@ set bg=light
 
 " PLUGIN SPECIFIC CONFIGURATION
 " use lightline-buffer in lightline
-let g:lightline = {
-  \ 'colorscheme': 'rosepine',
-  \ }
-" let g:lightline = {}
+" let g:lightline = {
+"   \ 'colorscheme': 'rosepine',
+"   \ }
+let g:lightline = {}
 let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
 let g:lightline.component_type   = {'buffers': 'tabsel'}
@@ -148,10 +152,10 @@ let g:lightline#bufferline#min_buffer_count = 2
 
 " Override default styling for tabline for rosepine.
 " You can echo this variable to get the colors rosepine uses.
-let s:palette = g:lightline#colorscheme#rosepine#palette
+" let s:palette = g:lightline#colorscheme#rosepine#palette
 "                                  Text     background
-let s:palette.tabline.tabsel = [['#faf4ed', '#565276', 24, 255]]
-unlet s:palette
+" let s:palette.tabline.tabsel = [['#faf4ed', '#565276', 24, 255]]
+" unlet s:palette
 
 " Configure signify
 " This makes it so vim reserves the sign column, which
@@ -168,6 +172,6 @@ let g:signify_vcs_cmds = {
 " colorscheme srcery
 " To use molokai: disable lightline theme. Do not source any theme in
 " .tmux.conf. Remove fzf coloring in .bash_profile. That should be it.
-" colorscheme molokai
+colorscheme molokai
 "
-colorscheme rose-pine-dawn
+" colorscheme rose-pine-dawn
