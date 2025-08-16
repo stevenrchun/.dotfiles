@@ -112,6 +112,7 @@ require("conform").setup({
 local lspconfig = require("lspconfig")
 lspconfig.ts_ls.setup({})
 lspconfig.superhtml.setup({})
+lspconfig.pyright.setup({})
 
 vim.lsp.set_log_level("INFO")
 
