@@ -78,6 +78,7 @@ require("conform").setup({
 		kotlin = { "ktlint" },
 		javascript = { "prettierd" },
 		html = { "superhtml" },
+    python = { "ruff_format" }
 	},
 	-- Automatically detects slow formatters and runs them aysnc
 	format_on_save = function(bufnr)

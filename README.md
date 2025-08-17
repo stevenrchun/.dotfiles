@@ -11,8 +11,10 @@ under `<dir>` in the directory above /.dotfiles
 Also, because several Vim workflows use `fzf` and `Ag`, it's worth noting them
 here to remember to install on new machines.
 
-For the Silver Searcher:
 
+Things to install via Brew (could work for both MacOS and Linux):
+
+For the Silver Searcher:
 ```
 brew install the_silver_searcher
 ```
@@ -24,3 +26,12 @@ $(brew --prefix)/opt/fzf/install
 ```
 The latter command being for things like key bindings (mainly the reverse
 search) and completion.
+
+Linters
+```
+brew install ruff
+brew install ktlint
+brew install prettierd
+brew install superhtml
+```
+
