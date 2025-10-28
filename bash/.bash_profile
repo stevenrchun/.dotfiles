@@ -11,7 +11,8 @@ fi
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 
 # Adds homebrew to path.
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Silent if fails, where brew isn't available on workstation.
+eval "$(/opt/homebrew/bin/brew shellenv >& /dev/null)"
 
 # For Java
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
