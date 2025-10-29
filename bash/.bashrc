@@ -69,4 +69,6 @@ fi
 # Allow Ctrl-S Ctrl-Q commands in terminal (for saving in Vim)
 stty -ixon
 
+eval "$(direnv hook bash)"
+
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
