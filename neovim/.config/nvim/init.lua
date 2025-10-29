@@ -45,7 +45,7 @@ require("nvim-treesitter.configs").setup({
 
 	-- Automatically install missing parsers when entering buffer
 	-- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-	auto_install = fall,
+	auto_install = false,
 
 	-- List of parsers to ignore installing (or "all")
 	ignore_install = {},
@@ -223,3 +223,5 @@ vim.keymap.set("n", "rr", vim.lsp.buf.rename)
 vim.keymap.set("n", "ge", vim.diagnostic.open_float)
 -- get list (of errors)
 vim.keymap.set("n", "gl", vim.diagnostic.setqflist)
+
+vim.cmd[[colorscheme molokai]]

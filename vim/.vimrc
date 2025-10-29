@@ -12,7 +12,7 @@ call plug#begin()
   Plug 'terryma/vim-smooth-scroll' " Smooth out scrolling commands
   Plug 'srcery-colors/srcery-vim' " Srcery colorscheme
   Plug 'junegunn/fzf.vim' " FZF vim plugin
-  Plug 'UtkarshVerma/molokai.nvim', { 'branch': 'main' } " Neovim molokai
+  Plug 'UtkarshVerma/molokai.nvim' " Neovim molokai
   Plug 'junegunn/fzf' " FZF vim plugin
   Plug 'haya14busa/incsearch.vim' " Incremental search
   Plug 'pangloss/vim-javascript'
@@ -172,6 +172,6 @@ let g:signify_vcs_cmds = {
 " colorscheme srcery
 " To use molokai: disable lightline theme. Do not source any theme in
 " .tmux.conf. Remove fzf coloring in .bash_profile. That should be it.
-colorscheme molokai
+" colorscheme molokai
 "
 " colorscheme rose-pine-dawn
