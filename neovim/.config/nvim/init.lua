@@ -1,21 +1,22 @@
 -- Source vimrc
 vim.cmd("source ~/.vimrc")
 
+
 -- Persistent Undo
 vim.opt.undofile = true
 
 -- Use new osc52 support in neovim
--- vim.g.clipboard = {
---   name = 'OSC 52',
---   copy = {
---     ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
---     ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
---   },
---   paste = {
---     ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
---     ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
---   },
--- }
+vim.g.clipboard = {
+  name = 'OSC 52',
+  copy = {
+    ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+  },
+  paste = {
+    ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+  },
+}
 
 -- Smooth Scroll
 require("neoscroll").setup({
@@ -107,6 +108,26 @@ require("conform").setup({
 -- require('avante').setup ({
 --   -- Your config here!
 -- })
+--
+-- Autocomplete via COQ
+-- Unbind coq jump to mark.
+vim.g.coq_settings = {
+	keymap = {
+		jump_to_mark = "",
+	},
+	auto_start = "shut-up",
+	clients = {
+		lsp = {
+			always_on_top = {},
+			resolve_timeout = 2,
+		},
+	},
+	limits = {
+		completion_auto_timeout = 2,
+	},
+}
+
+local coq = require("coq")
 
 -- LSP Configs.
 -- Note: still installing the binaries manually.
@@ -114,7 +135,7 @@ local lspconfig = require("lspconfig")
 lspconfig.ts_ls.setup({})
 lspconfig.superhtml.setup({})
 lspconfig.pyright.setup({})
-vim.lsp.config('kotlin_lsp', {
+vim.lsp.config('kotlin_lsp', coq.lsp_ensure_capabilities({
   cmd = {
     '/usr/local/google/home/stevenchun/lsp-servers/kotlin-0.253.10629/kotlin-lsp.sh',
     '--stdio',
@@ -123,7 +144,7 @@ vim.lsp.config('kotlin_lsp', {
   root_markers = {
     'WORKSPACE.bazel'
   }
-})
+}))
 vim.lsp.enable('kotlin_lsp')
 
 vim.lsp.set_log_level("INFO")
@@ -174,23 +195,6 @@ vim.lsp.set_log_level("INFO")
 -- 	end,
 -- })
 
--- Autocomplete via COQ
--- Unbind coq jump to mark.
-vim.g.coq_settings = {
-	keymap = {
-		jump_to_mark = "",
-	},
-	auto_start = "shut-up",
-	clients = {
-		lsp = {
-			always_on_top = {},
-			resolve_timeout = 1,
-		},
-	},
-	limits = {
-		completion_auto_timeout = 1,
-	},
-}
 
 -- Keymaps
 -- Mapping to yank to system keyboard (both star and plus).
@@ -224,4 +228,4 @@ vim.keymap.set("n", "ge", vim.diagnostic.open_float)
 -- get list (of errors)
 vim.keymap.set("n", "gl", vim.diagnostic.setqflist)
 
-vim.cmd[[colorscheme molokai]]
+vim.cmd[[colorscheme rose-pine-main]]
