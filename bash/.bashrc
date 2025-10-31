@@ -30,16 +30,19 @@ function SetVirtualEnv () {
 
 function GoogleProdStr() {
   # based on go/g4recipes
-  prodcertstatus --nocheck_loas --nocheck_ssh --check_remaining_hours=1 > /dev/null 2>&1;
-  case $? in
-    # Full prodaccess:
-    0) local PROD_STR="" ;;
-    # Prodaccess will soon expire:
-    8) local PROD_STR="\[$(tput setaf 3)\][PROD < 1H] " ;;
-    # No prodaccess:
-    *) local PROD_STR="\[$(tput setaf 1)\][NO PROD] " ;;
-  esac
-  echo $PROD_STR
+  if command -v prodcertstatus >& /dev/null; then
+
+    prodcertstatus --nocheck_loas --nocheck_ssh --check_remaining_hours=1 > /dev/null 2>&1;
+    case $? in
+      # Full prodaccess:
+      0) local PROD_STR="" ;;
+      # Prodaccess will soon expire:
+      8) local PROD_STR="\[$(tput setaf 3)\][PROD < 1H] " ;;
+      # No prodaccess:
+      *) local PROD_STR="\[$(tput setaf 1)\][NO PROD] " ;;
+    esac
+    echo $PROD_STR
+  fi
 }
 
 function prompt_title {
@@ -61,6 +64,12 @@ alias which='type -all'
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias network_strength='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I'
 alias gccp='g++ -ansi -pedantic-errors -Wall $1 $2 $3'
+# Adds homebrew to path.
+# Silent if fails, where brew isn't available on workstation.
+if [ -e "/opt/homebrew/bin/brew" ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 # If nvim isn't installed on the system, alias to the expected path on workstation.
 if ! command -v nvim >& /dev/null; then
   alias nvim='~/nvim11.appimage'
@@ -69,6 +78,9 @@ fi
 # Allow Ctrl-S Ctrl-Q commands in terminal (for saving in Vim)
 stty -ixon
 
-eval "$(direnv hook bash)"
+if command -v direnv >& /dev/null; then
+  echo "executing direnv hook"
+  eval "$(direnv hook bash)"
+fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
