@@ -38,6 +38,7 @@ call plug#begin()
     Plug 'nvim-lua/plenary.nvim'
     Plug 'MunifTanjim/nui.nvim'
     Plug 'yetone/avante.nvim', { 'branch': 'main', 'do': 'make' }
+    Plug 'ellisonleao/gruvbox.nvim'
   endif
 call plug#end()
 
@@ -137,8 +138,6 @@ nnoremap <Right> :bnext<CR>
 " Make sure ejs is recognized as html.
 au BufNewFile,BufRead *.ejs set filetype=html
 
-set bg=light
-
 " PLUGIN SPECIFIC CONFIGURATION
 " use lightline-buffer in lightline
 " let g:lightline = {
@@ -174,4 +173,4 @@ let g:signify_vcs_cmds = {
 " .tmux.conf. Remove fzf coloring in .bash_profile. That should be it.
 " colorscheme molokai
 "
-" colorscheme rose-pine-dawn
+"colorscheme gruvbox
